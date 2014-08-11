@@ -1,0 +1,21 @@
+<?php 
+include '../php/player.php';
+include '../php/event.php';
+include '../php/restRequest.php';
+include '../php/myFunctions.php';
+$player = getUser();
+$events = getRequest($urlServices.'events/player/'.$player->__get('id').'?status='.$_REQUEST['status']);
+
+
+foreach($events as $event) { ?>
+<!-- Begin Toggle -->
+  <div class="toggle">
+	<h2 class="trigger" onclick="$.loadEventInfo('<?php echo $event->{"userId"} ?>', '<?php echo $event->{"prepayment"} ?>', '<?php echo $event->{"status"} ?>', '<?php echo $event->{"id"}?>', '<?php echo $event->{"entity"} ?>')"> 
+	+ <?php echo $event->{'entityName'} ?>  - <?php echo $event->{'start_date'} ?> - <?php echo constant('LABEL'.$event->{'status'}) ?> </h2>
+	<div id="eventInfo<?php echo $event->{'id'} ?>" style="width: 100%;" class="togglebox">
+	 
+	</div>
+</div>
+<!-- End Toggle --> 
+<?php } ?>      
+

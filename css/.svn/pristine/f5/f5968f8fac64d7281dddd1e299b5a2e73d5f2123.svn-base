@@ -1,0 +1,94 @@
+(function($) {
+	var normalize = (function() {
+		var from = "ÃÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛãàáäâèéëêìíïîòóöôùúüûÑñÇç",
+		to   = "AAAAAEEEEIIIIOOOOUUUUaaaaaeeeeiiiioooouuuunncc",
+		mapping = {};
+ 
+		for(var i = 0, j = from.length; i < j; i++ )
+			mapping[ from.charAt( i ) ] = to.charAt( i );
+ 
+		return function( str ) {
+			var ret = [];
+			for( var i = 0, j = str.length; i < j; i++ ) {
+				var c = str.charAt( i );
+				if( mapping.hasOwnProperty( str.charAt( i ) ) )
+					ret.push( mapping[ c ] );
+				else
+					ret.push( c );
+			}
+			return ret.join( '' );
+		}
+ 
+		})();
+
+	$.loadMainFilter = function(param) {
+	
+		var state = param.state;
+		var district = param.district;
+		var sport = param.sport;
+		var ground = param.ground;
+		var hour = param.hour;
+		var day = param.day;
+		
+		_processTemplate = function(response) {
+			var data;
+			$.template("mainFilterTemplate", response);
+			$("#mainFilter").html(
+			$.tmpl("mainFilterTemplate", data, {}));
+			
+			$('#mainFilter > ul').dropotron({ 
+				offsetX: -2,
+				offsetY: -8,
+				mode: 'fade',
+				noOpenerFade: true,
+				hoverDelay: 0,
+				hideDelay: 350,
+				detach: false
+			});
+			
+			if (sport != 'DEPORTE') {
+				$('.backgroundSport').css({
+					"background-image": "url('images/" + normalize(sport) + ".jpg')"
+				});
+			}
+			
+		}
+		
+		$.ajax({
+			url: 'html/mainFilter.php?state=' + state + '&district=' + district + '&sport=' + sport + '&ground=' + ground + '&hour=' + hour + '&day=' + day,
+			type: 'html',
+			success: _processTemplate
+		});
+	}
+	
+	$.loadHeader = function(param) {
+		
+		var state = param.state;
+		var sport = param.sport;
+	
+		_processTemplate = function(response) {
+			var data;
+			$.template("headerTemplate", response);
+			$("#nav").html(
+			$.tmpl("headerTemplate", data, {}));
+			
+			$('#nav > ul').dropotron({ 
+				offsetX: -2,
+				offsetY: -8,
+				mode: 'fade',
+				noOpenerFade: true,
+				hoverDelay: 0,
+				hideDelay: 350,
+				detach: false
+			});
+		}
+	
+		$.ajax({
+			url: 'html/header.php?state=' + state.replace(' ', '%20') + '&sport=' + sport.replace(' ', '%20'),
+			type: 'html',
+			success: _processTemplate
+		});
+	}
+	
+
+})(jQuery);

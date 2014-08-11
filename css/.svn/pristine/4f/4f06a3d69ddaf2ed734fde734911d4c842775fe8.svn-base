@@ -1,0 +1,78 @@
+<?php
+		include '../php/restRequest.php';
+		include '../php/jqueryAjax.php';
+		
+		/*session_start(); 
+		
+		if (isset($_SESSION['states'])) {
+			$states = $_SESSION['states'];
+		} else {
+			$states = getRequest($urlServices . 'districts/states');
+			$_SESSION['states'] = $states;
+		}
+		
+		if (isset($_SESSION['sports'])) {
+			$sports = $_SESSION['sports'];
+		} else {
+			$sports = getRequest($urlServices . 'sports/');
+			$_SESSION['sports'] = $sports;
+		}*/
+		
+		if (apc_exists('app:states') !== false) {
+			$states = apc_get('app:states');
+		} else {
+			$states = getRequest($urlServices . 'districts/states');
+			apc_store('app:states', $states);
+		}
+		
+		if (apc_exists('app:sports') !== false) {
+			$sports = apc_get('app:sports');
+		} else {
+			$sports = getRequest($urlServices . 'sports/');
+			apc_store('app:sports', $states);
+		}
+		
+		if (isset($_REQUEST['sport'])) {
+			$sport = empty($_REQUEST['sport']) ? $sports[0]->{"name"} : $_REQUEST['sport'];
+		} else {
+			$sport = $sports[0]->{"name"};
+		}
+		
+		if (isset($_REQUEST['state'])) {
+			$state = empty($_REQUEST['state']) ? $states[0] : $_REQUEST['state'];
+		} else {
+			$state = $states[0];
+		}
+?>
+<ul>
+	<li>
+		<?php
+			echo '<a href="" class="icon icon-bar-chart"><span>' . $state . '</span></a>';
+			echo '<ul>';
+				foreach ($states as $stateIT) {
+					echo '<li><a href="" onclick="';
+					echo loadHeaderSentence($stateIT, $sport);
+					echo '">' . $stateIT . '</a></li>';
+				}
+			echo '</ul>';
+		?>
+	</li>
+	<li>
+		<?php
+			echo '<a href="" class="icon icon-bar-chart"><span>' . $sport . '</span></a>';
+			echo '<ul>';
+				foreach ($sports as $sportIT) {
+					echo '<li><a href="" onclick="';
+					echo loadHeaderSentence($state, $sportIT->{"name"});
+					echo '">' . $sportIT->{"name"} . '</a></li>';
+				}
+			echo '</ul>';
+		?>
+	</li>
+	
+	<script type="text/javascript">
+		<?php echo loadMainFilterSentence($state, '', $sport, '', '', '');	?>
+	</script>
+	
+	<li><a class="icon icon-facebook-sign" href="index.php"><span>ingresar</span></a></li>
+</ul>

@@ -1,0 +1,109 @@
+<?php
+	include '../php/jqueryAjax.php';
+	include '../php/restRequest.php';
+	
+	$serchParameter = '?';
+
+	if (isset($_REQUEST['state'])) {
+		$serchParameter = $serchParameter.'state='.$_REQUEST['state'];
+	} 
+	
+	if (isset($_REQUEST['sport'])) {
+		$serchParameter = $serchParameter.'&sport='.$_REQUEST['sport'];
+	} 
+	
+	if (isset($_REQUEST['district'])) {
+		$serchParameter = $serchParameter.'&district='.$_REQUEST['district'];
+	}
+	
+	if (isset($_REQUEST['ground'])) {	
+		$serchParameter = $serchParameter.'&ground='.$_REQUEST['ground'];
+	}
+	
+	if (isset($_REQUEST['hour'])) {
+		$serchParameter = $serchParameter.'&hour='.$_REQUEST['hour'];
+	}
+	
+	if (isset($_REQUEST['day'])) {
+		$serchParameter = $serchParameter.'&day='.$_REQUEST['day'];
+	}
+	
+	if ($serchParameter == '?') {
+		$serchParameter = '';
+	}
+	
+	$pageCant = getRequest($urlServices.'stablishments/count'.replace($serchParameter));
+	
+	
+	
+	
+?>
+<div id="main-wrapper">
+
+		<!-- Main -->
+			<div id="main" class="container">
+				<div class="row">
+				
+					<!-- Sidebar -->
+						<div id="sidebar" class="4u">
+						
+							<!-- Excerpts -->
+								
+								
+								<section>
+									<ul class="divided">
+										<li>
+
+											<!-- Excerpt -->
+												<article class="is-excerpt">
+													<header>
+														<span class="date">May 18, 2013</span>
+													</header>
+												</article>
+
+										</li>
+										<li>
+
+											<!-- Excerpt -->
+												<article class="is-excerpt">
+													<header>
+														<span class="date">May 15, 2013</span>
+														<h3><a href="#">Kerfer merks mer herper</a></h3>
+													</header>
+													<p>Lorem ipsum dolor odio facilisis convallis. Etiam non nunc vel est 
+													suscipit convallis non id orci lorem ipsum sed magna consequat feugiat lorem dolore.</p>
+												</article>
+
+										</li>
+									</ul>
+								</section>
+								
+						
+						</div>
+
+					<!-- results -->
+						<div id="content" class="8u skel-cell-mainContent">
+
+							<div id="sidebar" class="4u">
+						
+							
+								<section>
+									<ul id="results" class="divided">
+										<!-- ajax injection of request results -->
+									</ul>
+								</section>
+						
+							</div>
+							
+						</div>
+
+				</div>
+			</div>
+
+	</div>
+			
+	<script type="text/javascript">
+		<?php 
+			echo loadSerchResultsSentence($serchParameter, '1', $pageCant->{"pageCant"});	
+		?>
+	</script>

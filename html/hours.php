@@ -1,0 +1,99 @@
+<?php
+	include '../php/event.php';
+	include '../php/restRequest.php';
+	include '../php/myFunctions.php';
+
+	if (isset($_REQUEST['id'])) {
+		$id = $_REQUEST['id'];
+	}
+	if (isset($_REQUEST['openHour'])) {
+		$openHour = $_REQUEST['openHour'];
+	}
+	if (isset($_REQUEST['closeHour'])) {
+		$closeHour = $_REQUEST['closeHour'];
+	}
+	if (isset($_REQUEST['day'])) {
+		$day = $_REQUEST['day'];
+	}
+
+	$events = getRequest($urlServices.'events/'.$id . '?start=' . $day . '%20' . $openHour . '&end=' . $day . '%20' . $closeHour);
+	
+	
+?>
+<style>
+.booked {
+	background-color: red;
+}
+</style>
+<script type="text/javascript">
+	onHourSelect = function(li, hourIT) {
+		$('#<?php echo 'hour'.$id ?>').html(hourIT);
+		$('#<?php echo 'button'.$id ?>').css({'display':'block'});
+		if (li.className.match(/(?:^|\s)booked(?!\S)/) ) {
+			$('#<?php echo 'button'.$id ?>').text("Anotarme");
+		} else {
+			$('#<?php echo 'button'.$id ?>').text("Reservar");
+		}
+	
+	};
+</script>
+<a href="" id="hour<?php echo $id ?>" class="icon icon-time"><span>hora de reserva</span></a>
+<ul>
+	<?php for ($hourIT = 0; $hourIT <= 24; $hourIT++) { 
+	
+	$open = explode(":", $openHour);
+	$close = explode(":", $closeHour);
+	if (strlen($hourIT) == 1) {
+		$hourIT = '0'.$hourIT;
+	}
+	
+	if((($open[0] + ($open[1]/60)) <= $hourIT) && (($close[0] + ($close[1]/60)) >= $hourIT)) {
+	
+	
+	$booked = false;
+	foreach ($events as $event) {
+		$startTime = explode(" ", $event->{"start_date"})[1];
+		$endTime = explode(" ", $event->{"end_date"})[1];
+		if ($startTime <= $hourIT.':00' && $endTime > $hourIT.':00') {
+			$status = $event->{"status"};
+			if ($status != CANCELED_PLAYER && $status != CANCELED_OWNER && $status != CANCELED_PREPAYMENT) {
+				$booked = true;
+			}
+			break;
+		}
+	}
+	?>
+	<li>
+		<a href="" class="<?php echo $booked ? 'booked' : '' ?>" onclick="onHourSelect(this, '<?php echo $hourIT.':00' ?>')" >
+		<?php echo $hourIT.':00' ?> 
+		</a>
+	</li>
+	<?php } ?>
+	
+	
+	<?php if ($hourIT == 24) break; 
+	
+	
+		  if((($open[0] + ($open[1]/60)) <= ($hourIT + 0.5)) && (($close[0] + ($close[1]/60)) >= $hourIT + 0.5)) {
+		  $booked = false;
+			foreach ($events as $event) {
+				$startTime = explode(" ", $event->{"start_date"})[1];
+				$endTime = explode(" ", $event->{"end_date"})[1];
+				if ($startTime <= $hourIT.':30' && $endTime > $hourIT.':30') {
+					$status = $event->{"status"};
+					if ($status != CANCELED_PLAYER && $status != CANCELED_OWNER && $status != CANCELED_PREPAYMENT) {
+						$booked = true;
+					}
+					break;
+				}
+			}
+		  
+	?>
+	<li>
+		<a href="" class="<?php echo $booked ? 'booked' : '' ?>" onclick="onHourSelect(this, '<?php echo $hourIT.':30' ?>')" >
+			<?php echo $hourIT.':30' ?>
+		</a>
+	</li>
+	<?php }
+	} ?>
+</ul>

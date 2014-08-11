@@ -1,0 +1,103 @@
+<?php
+	include '../php/restRequest.php';
+	include '../php/jqueryAjax.php';
+
+	if (isset($_REQUEST['state'])) {
+		$state = $_REQUEST['state'];
+	} 
+	
+	$districts = getRequest($urlServices . 'districts/?state=' . replace($state));
+	
+	if (isset($_REQUEST['sport'])) {
+		$sport = $_REQUEST['sport'];
+	} 
+	
+	$grounds = getRequest($urlServices . 'grounds/' . replace($sport));
+	
+	if (isset($_REQUEST['district'])) {
+		$district = empty($_REQUEST['district']) ? "BARRIO" : $_REQUEST['district'];
+	} else {
+		$district = "BARRIO";
+	}
+	
+	if (isset($_REQUEST['ground'])) {	
+		$ground = empty($_REQUEST['ground']) ? "SUELO" : $_REQUEST['ground'];
+	} else {
+		$ground = "SUELO";
+	}
+	
+	if (isset($_REQUEST['hour'])) {
+		$hour = empty($_REQUEST['ground'])  ? "HORA" : $_REQUEST['hour'];
+	} else {
+		$hour = "12:00";
+	}
+	
+	if (isset($_REQUEST['day'])) {
+		$day = empty($_REQUEST['day'])  ? "DÍA" : $_REQUEST['day'];
+	} else {
+		$day = "DÍA";
+	}
+	
+?>
+<ul>
+	<li>
+		<?php
+			echo '<a href="" class="icon icon-bar-chart" style="color: #FFF"><span>' . $district . '</span></a>';
+			echo '<ul>';
+				foreach ($districts as $districtIT) {
+					echo '<li><a href="" onclick="';
+					echo loadMainFilterSentence($state, $districtIT->{"name"}, $sport, $ground, $hour, $day);
+					echo '">' .$districtIT->{"name"} . '</a></li>';
+				}
+			echo '</ul>';
+		?>
+	</li>
+	<li>
+		<?php
+			echo '<a href="" class="icon icon-bar-chart" style="color: #FFF"><span>' . $sport . '</span></a>';
+		?>
+	</li>
+	<li>
+		<?php
+			echo '<a href="" class="icon icon-bar-chart" style="color: #FFF"><span>' . $ground . '</span></a>';
+			echo '<ul>';
+				foreach ($grounds as $groundIT) {
+					echo '<li><a href="" onclick="';
+					echo loadMainFilterSentence($state, $district, $sport, $groundIT->{"text"}, $hour, $day);
+					echo '">' . $groundIT->{"text"} . '</a></li>';
+				}
+			echo '</ul>';
+		?>
+	</li>
+	<li>
+		<?php
+			echo '<a href="" class="icon icon-bar-chart" style="color: #FFF"><span>' . $hour . '</span></a>';
+			echo '<ul>';
+				for ($hourIT = 0; $hourIT <= 24; $hourIT++) {
+					echo '<li><a href="" onclick="';
+					echo loadMainFilterSentence($state, $district, $sport, $ground, $hourIT . ':00', $day);
+					echo '">' . $hourIT . ':00' . '</a></li>';
+					if ($hourIT == 24) break;
+					echo '<li><a href="" onclick="';
+					echo loadMainFilterSentence($state, $district, $sport, $ground, $hourIT . ':30', $day);
+					echo '">' . $hourIT . ':30' . '</a></li>';
+				}
+			echo '</ul>';
+		?>
+	</li>
+	<li>
+		<?php
+			echo '<a href="" class="icon icon-bar-chart" style="color: #FFF"><span>' . $day  . '</span></a>';
+			echo '<ul>';
+			for ($i = 0; $i <= 30; $i++) {
+				$mkTime = mktime(0, 0, 0, date("m"), date("d") + $i, date("Y"));
+				$dayIT = date("d/m/Y", $mkTime);
+				echo '<li><a href="" onclick="';
+				echo loadMainFilterSentence($state, $district, $sport, $ground, $hour, $dayIT);
+				echo '">' . $dayIT . '</a></li>';
+				
+			}
+			echo '</ul>';
+		?>
+	</li>
+</ul>

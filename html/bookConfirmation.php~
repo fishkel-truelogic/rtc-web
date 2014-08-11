@@ -1,0 +1,106 @@
+<?php
+	include "../php/player.php";
+	include "../php/myFunctions.php";
+	include '../php/restRequest.php';
+	
+	$id = $_REQUEST['id'];								
+	$idf = $_REQUEST['idf'];								
+	$day = $_REQUEST['day'];								
+	$hour = $_REQUEST['hour'];								
+	$stablishment = getRequest($urlServices.'stablishments/'.$id);
+	$field = getRequest($urlServices.'fields/'.$idf);
+	$player = getUser();
+	
+	$format = "d/m/Y G:i";
+	$format2 = "m/d/Y G:i";
+	
+	$datetime1 = date_format(date_create_from_format($format, $day.' '.$hour), $format2);
+	
+	$interval = round((strtotime($datetime1) - strtotime("now"))/3600, 1);
+	
+	
+	if($interval >= 336) {
+		$prepayment = addIntervalToStrTime($day, "d/m/Y", "-12 days");
+		$prepayment = $prepayment.' 00:00';
+		$daysBefore = "13 días antes";
+	} elseif($interval >= 168) {
+		$prepayment = addIntervalToStrTime($day, "d/m/Y", "-5 days");
+		$prepayment = $prepayment.' 00:00';
+		$daysBefore = "6 días antes";
+	} elseif($interval >= 96) {
+		$prepayment = addIntervalToStrTime($day, "d/m/Y", "-4 days");
+		$prepayment = $prepayment.' 00:00';
+		$daysBefore = "3 días antes";
+	} elseif($interval >= 48) {
+		$prepayment = addIntervalToStrTime($day.' '.$hour, $format, "-24 hours");
+		$daysBefore = "24 horas antes";
+	} elseif($interval >= 24) {
+		$prepayment = addIntervalToStrTime($day.' '.$hour, $format, "-6 hours");
+		$daysBefore = "6 horas antes";
+	} elseif($interval >= 12) {
+		$prepayment = addIntervalToStrTime($day.' '.$hour, $format, "-3 hours");
+		$daysBefore = "3 horas antes";
+	} elseif($interval >= 6) {
+		$prepayment = addIntervalToStrTime($day.' '.$hour, $format, "-2 hours");
+		$daysBefore = "2 horas antes";
+	} else {
+		$prepayment = '';
+		$daysBefore = "No se requiere seña";
+	}		
+	
+	
+?>
+<div style="background: #e1c192 url(images/wood_pattern.jpg); width:100%; height:100%">
+	<div class="containerLogin">	
+		<section class="main" style="top:20px">
+			<form class="form-2" style="top:20px">
+				<h1><span class="log-in">Reservá</span>
+				<span class="log-in" style="float:right">Cansado de pagar seña? Hacete	<a href="">VIPlayer!</a></span>
+				</h1>
+				<p style="margin-bottom: 0px; float:left; width: 29%; padding-right: 10px;">
+					<label for="login"><i class="icon-user"></i>Nombre de usuario</label>
+					<input type="text" id="username" name="username"  value="<?php echo $player->__get("username"); ?>" disabled>
+					<label for="login"><i class="icon-user"></i>Lugar</label>
+					<input type="text" id="fieldName" name="fieldName"  value="<?php echo $stablishment->{"name"}; ?>" disabled>
+					<input type="hidden" id="fieldId" name="fieldId"  value="<?php echo $stablishment->{"id"}; ?>" disabled>
+					<label for="login"><i class="icon-calendar"></i>Horario de reserva</label>
+					<input type="text" id="bookDate" name="bookDate" value="<?php echo $day.' '.$hour ?>" disabled>
+					<label for="login"><i class="icon-time"></i>Fecha Límite para pagar la SEÑA</label>
+					<input type="text" id="prepaymentDate" name="prepaymentDate" value="<?php echo $prepayment.' - '.$daysBefore?>" disabled>
+				</p>
+				<p style="margin-bottom: 0px; float:left; width: 39%; padding-right: 10px;"> 
+					<label for="login"><i class="icon-inbox"></i>email</label>
+					<input type="text" id="email" name="email"  value="<?php echo $player->__get("email"); ?>" disabled>
+					<label for="login"><i class="icon-user"></i>Dirección</label>
+					<input type="text" id="address" name="address"  value="<?php echo $stablishment->{"address"}. ' - ' . $stablishment->{"district"}->{"state"}. ' - ' . $stablishment->{"district"}->{"name"} ?>" disabled>
+					<label for="login"><i class="icon-user"></i>Cancha</label>
+					<input type="text" id="username" name="username"  value="<?php echo $field->{"name"}; ?>" disabled>	
+					<label for="login"><i class="icon-user"></i>Costo</label>
+					<input type="text" id="username" name="username"  value="<?php echo "$$$" ?>" disabled>	
+				</p>
+				<p style="margin-bottom: 0px; float:left; width: 32%">
+					<span style="float:left; margin:0px; margin-top:30px;" class="image image-left"><img style="width:100%;  min-height: 215px; " src="http://127.0.0.1:8080<?php echo $field->{"album"}->{"cover"}->{"dir"}?>"  /></span>
+				</p>
+				<p style="width: 100%; margin-bottom:-1px">
+					<a style="width: 100%;" class="image image-left">
+						<iframe style="margin-bottom: -8px; width: 100%" src="html/stablishmentMap.php?lat=<?php echo $stablishment->{"mapMarker"}->{"lat"} ?>&lng=<?php echo $stablishment->{"mapMarker"}->{"lng"} ?>&address=<?php echo $stablishment->{"address"} ?>" seamless>
+							<p>Your browser does not support iframes.</p>
+						</iframe>
+					</a>
+				</p>
+				
+				<p class="loginError" style="visibility:hidden">
+					<label><i class="icon-thumbs-down"></i></label>
+				<p>
+				<p  style="margin-bottom: 0px;" class="clearfix">  
+					<a class="icon-ban-circle log-twitter" onclick="$('#book-confirmation-dialog').dialog('close')" style="background-color:black; color:red">Cancelar</a>  
+					<?php if($player->__get('emailConfirmed')) { ?>
+					<input class="submit" onclick="$.loadEmailConfirmationDialog();"  value="Reservar" >
+					<?php } else { ?>
+					<input class="submit" onclick="$.bookingField('<?php echo $field->{'id'}?>','<?php echo $day.' '.$hour ?>', '<?php echo $prepayment ?>', '<?php echo $stablishment->{"userId"} ?>', '<?php echo $field->{"name"} ?>');"  value="Reservar" >
+					<?php } ?>
+				</p>
+			</form>​​
+		</section>
+	</div>
+</div>

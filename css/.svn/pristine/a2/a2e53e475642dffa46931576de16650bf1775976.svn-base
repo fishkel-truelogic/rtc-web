@@ -1,0 +1,11 @@
+<?php
+
+	function loadMainFilterSentence($state, $district, $sport, $ground, $hour, $day) {
+		return '$.loadMainFilter({state:\'' . $state . '\', district:\'' . $district . '\', sport: \'' . $sport  . '\', ground: \'' . $ground  . '\', hour: \'' . $hour . '\', day: \'' . $day . '\'});';
+	}
+	function loadHeaderSentence($state, $sport) {
+		return '$.loadHeader({state:\'' . $state . '\', sport:\'' . $sport . '\'});';
+	}
+	
+
+?>

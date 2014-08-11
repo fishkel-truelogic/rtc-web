@@ -1,0 +1,169 @@
+<?php
+include 'php/player.php';
+include 'php/event.php';
+include 'php/restRequest.php';
+include 'php/myFunctions.php';
+$player = getUser();
+$events = getRequest($urlServices.'events/player/'.$player->__get('id').'?status='.constant('NO_PLAYED_YET'));
+?>
+<!DOCTYPE HTML>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<title>Reservá tu cancha - <?php echo $player->__get('username') ?></title>
+<noscript>
+	<link rel="stylesheet" href="css/skel-noscript.css" />
+	<link rel="stylesheet" href="css/style.css" />
+	<link rel="stylesheet" href="css/style-desktop.css" />
+</noscript>
+<link rel="shortcut icon" type="image/x-icon" href="images/player/favicon.png" />
+<link rel="stylesheet" type="text/css" href="css/style-login.css" />
+<link rel="stylesheet" type="text/css" href="css/style-player.css" media="all" />
+<link rel="stylesheet" href="css/jquery-ui.css" />
+<link href='http://fonts.googleapis.com/css?family=Amaranth' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Droid+Serif:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<!--[if IE 7]>
+<link rel="stylesheet" type="text/css" href="style/css/ie7.css" media="all" />
+<![endif]-->
+<!--[if IE 8]>
+<link rel="stylesheet" type="text/css" href="style/css/ie8.css" media="all" />
+<![endif]-->
+<!--[if IE 9]>
+<link rel="stylesheet" type="text/css" href="style/css/ie9.css" media="all" />
+<![endif]-->
+<script type="text/javascript" src="js/player/jquery-1.6.4.min.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script type="text/javascript" src="js/player/ddsmoothmenu.js"></script>
+<script type="text/javascript" src="js/player/jquery.jcarousel.js"></script>
+<script type="text/javascript" src="js/player/jquery.prettyPhoto.js"></script>
+<script type="text/javascript" src="js/player/carousel.js"></script>
+<script type="text/javascript" src="js/player/jquery.flexslider-min.js"></script>
+<script type="text/javascript" src="js/player/jquery.masonry.min.js"></script>
+<script type="text/javascript" src="js/player/jquery.slickforms.js"></script>
+<script src="js/jquery.tmpl.js"></script>
+<script src="js/main.js"></script>
+
+
+<style type="text/css">
+
+#player {
+    background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
+    display: block;
+    padding: 12px 17px 10px 20px;
+    text-decoration: none;
+    border: 0 none;
+    margin: 0;
+    outline: 0 none;
+    vertical-align: baseline;
+	position: relative;
+	top: 30px;
+	left: 12px;
+}
+
+.font-player {
+    color: #FFFFFF;
+	font-family: 'Amaranth',sans-serif;
+    font-size: 17px;
+    text-align: left;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.sidebox-item {
+	display: block;
+	padding-bottom: 5px;
+}
+</style>
+</head>
+<body>
+
+
+<div id="booking" style="display:none"></div>
+<div id="cancel-dialog" style="display:none"></div>
+<!-- Begin Wrapper -->
+<div id="wrapper">
+	<!-- Begin Sidebar -->
+	<div id="sidebar">
+		 <div id="player" class="font-player">
+			<span style="diplay: block"><?php echo $player->__get('username') ?></span>
+			<span style="diplay: block"><?php echo $player->__get('email') ?></span>
+		 </div>
+		 
+	<div id="logo"><img src="http://graph.facebook.com/<?php echo $player->__get('fbId') ?>/picture?width=160&height=160" alt="" /></div>
+    
+	
+	<div class="sidebox font-player">
+		<span class="sidebox-item">Reservas: <?php echo 'xx' ?></span>
+		<span class="sidebox-item">Puntos: <?php echo 'xx' ?></span>
+		<p class="sidebox-item">Una vez que concretes la reserva y califiques al establecimiento se te sumarán los puntos</p>
+    </div>
+		 
+	<!-- Begin Menu -->
+    <div id="menu" class="menu-v">
+      <ul>
+        <li><span class="log-in" style="float:right">Cansado de pagar seña? Hacete	<a href="" style=" display: inline; padding: 0;">VIPlayer!</a></span></li>
+      </ul>
+    </div>
+    <!-- End Menu -->
+   
+    
+
+    
+	</div>
+	<!-- End Sidebar -->
+	
+	<!-- Begin Content -->
+	<div id="content">
+	<h1 class="title">Perfil de Juagador</h1>
+	<div class="line"></div>
+	<div class="intro">Aquí puedes hacer un seguimiento de tus reservas y calificar los establecimientos que aun no haz calificado para seguir sumando puntos y obtener más beneficios.</div>
+	
+	
+      <div class="line"></div>
+
+
+	  <div class="tabbed-content">
+        <h3>Reservas</h3>
+        <ul class="tabs">
+          <li><a href="#<?php echo constant('NO_PLAYED_YET') ?>" onclick="$.loadEvents(<?php echo constant('NO_PLAYED_YET') ?>)">Confirmadas</a></li>
+          <li><a href="#<?php echo constant('NO_PREPAYMENT_YET') ?>" onclick="$.loadEvents(<?php echo constant('NO_PREPAYMENT_YET') ?>)">Pendientes de seña</a></li>
+          <li><a href="#<?php echo constant('CANCELED_PLAYER') ?>" onclick="$.loadEvents(<?php echo constant('CANCELED_PLAYER') ?>)">Canceladas Jugador</a></li>
+          <li><a href="#<?php echo constant('CANCELED_OWNER') ?>" onclick="$.loadEvents(<?php echo constant('CANCELED_OWNER') ?>)">Canceladas Dueño</a></li>
+          <li><a href="#<?php echo constant('CANCELED_PREPAYMENT') ?>" onclick="$.loadEvents(<?php echo constant('CANCELED_PREPAYMENT') ?>)">Vencidas por seña</a></li>
+          <li><a href="#<?php echo constant('NO_RATED_YET') ?>" onclick="$.loadEvents(<?php echo constant('NO_RATED_YET') ?>)">A Calificar</a></li>
+        </ul>
+        <div class="tab_container">
+          <div style="display: none;" id="<?php echo constant('NO_PLAYED_YET') ?>" class="tab_content">
+
+		  <?php foreach($events as $event) { ?>
+			  <!-- Begin Toggle -->
+			  <div class="toggle">
+				<h2 class="trigger" onclick="$.loadEventInfo('<?php echo $event->{'userId'} ?>', '<?php echo $event->{'prepayment'} ?>', '<?php echo $event->{'status'} ?>', '<?php echo $event->{'id'} ?>')"> + <?php echo $event->{'entityName'} ?>  - <?php echo $event->{'start_date'} ?> - <?php echo constant('LABEL'.$event->{'status'}) ?> </h2>
+				<div id="eventInfo<?php echo $event->{'id'} ?>" style="width: 100%;" class="togglebox">
+				 
+				</div>
+			  </div>
+			  <!-- End Toggle --> 
+			  <?php } ?>      
+			
+          </div>
+          <div style="display: none;" id="<?php echo constant('NO_PREPAYMENT_YET') ?>" class="tab_content"></div>
+          <div style="display: none;" id="<?php echo constant('CANCELED_PLAYER') ?>" class="tab_content"></div>
+          <div style="display: none;" id="<?php echo constant('CANCELED_OWNER') ?>" class="tab_content"></div>
+          <div style="display: none;" id="<?php echo constant('CANCELED_PREPAYMENT') ?>" class="tab_content"></div>
+          <div style="display: none;" id="<?php echo constant('NO_RATED_YET') ?>" class="tab_content"></div>
+        </div>
+      </div>
+
+	  
+	</div>
+	<!-- End Content -->
+	
+</div>
+<!-- End Wrapper -->
+<div class="clear"></div>
+<script type="text/javascript" src="js/player/scripts.js"></script>
+<!--[if !IE]> -->
+<script type="text/javascript" src="js/player/jquery.corner.js"></script>
+<!-- <![endif]-->
+</body>
+</html>
